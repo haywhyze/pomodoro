@@ -2,22 +2,50 @@ import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import Button from 'react-native-button';
 
-const NavBarEdit = () => {
+const NavBarEdit = ({setTimer, start, reset}) => {
   const [activeButton, setActiveButton] = useState({
     pomodoro: true,
     short: false,
     long: false,
   });
+
+  const startPomodoro = () => {
+    reset();
+    setTimer(25);
+    setActiveButton({
+      pomodoro: true,
+      short: false,
+      long: false,
+    });
+    // start();
+  };
+
+  const startShortBreak = () => {
+    reset();
+    setTimer(5);
+    setActiveButton({
+      pomodoro: false,
+      short: true,
+      long: false,
+    });
+    // start();
+  };
+
+  const startLongBreak = () => {
+    reset();
+    setTimer(10);
+    setActiveButton({
+      pomodoro: false,
+      short: false,
+      long: true,
+    });
+    // start();
+  };
+
   return (
     <View style={styles.container}>
       <Button
-        onPress={() =>
-          setActiveButton({
-            pomodoro: true,
-            short: false,
-            long: false,
-          })
-        }
+        onPress={startPomodoro}
         style={StyleSheet.flatten([
           styles.tab,
           activeButton.pomodoro && styles.active,
@@ -29,13 +57,7 @@ const NavBarEdit = () => {
         Pomodoro
       </Button>
       <Button
-        onPress={() =>
-          setActiveButton({
-            pomodoro: false,
-            short: true,
-            long: false,
-          })
-        }
+        onPress={startShortBreak}
         style={StyleSheet.flatten([
           styles.tab,
           activeButton.short && styles.active,
@@ -47,13 +69,7 @@ const NavBarEdit = () => {
         Short Break
       </Button>
       <Button
-        onPress={() =>
-          setActiveButton({
-            pomodoro: false,
-            short: false,
-            long: true,
-          })
-        }
+        onPress={startLongBreak}
         style={StyleSheet.flatten([
           styles.tab,
           activeButton.long && styles.active,

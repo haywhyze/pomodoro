@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -11,12 +11,12 @@ import {
 import TopBar from './components/TopBar';
 import Icon from 'react-native-vector-icons/Entypo';
 
-let timerMinutes = 25;
-
-let currentTime = timerMinutes * 60 * 1000;
+let currentTime;
 
 const App = () => {
   const [countDown, setCountDown] = useState(countDown || null);
+
+  const [timer, setTimer] = useState(0);
 
   // const [currentTime, setCurrentTime] = useState(25 * 60 * 1000);
   const [minutes, setMinutes] = useState(
@@ -39,8 +39,10 @@ const App = () => {
   }
 
   function startCountdown(time) {
+    if (!time) {
+      time = timer || 25 * 60 * 1000;
+    }
     const countDownTime = new Date().getTime() + time;
-    console.log(time, countDownTime);
     if (countDown) {
       clearInterval(countDown);
     }
@@ -54,11 +56,6 @@ const App = () => {
         updateTime(
           Math.floor((currentTime % (1000 * 60 * 60)) / (1000 * 60)),
           setMinutes,
-        );
-        console.log(
-          (5).toLocaleString('en-US', {
-            minimumIntegerDigits: 2,
-          }),
         );
         updateTime(Math.floor((currentTime % (1000 * 60)) / 1000), setSeconds);
 
@@ -78,7 +75,7 @@ const App = () => {
   function resetCountdown() {
     updateTime(0, setMinutes);
     updateTime(0, setSeconds);
-    currentTime = timerMinutes * 60 * 1000;
+    currentTime = timer * 60 * 1000;
   }
 
   function reset() {
@@ -88,15 +85,17 @@ const App = () => {
 
   function start() {
     if (!countDown) {
-      console.log('from start', currentTime);
       startCountdown(currentTime);
     }
   }
 
-  function stop() {
-    clearInterval(countDown);
-    setCountDown(null);
-  }
+  useEffect(() => {
+    currentTime = timer * 60 * 1000;
+    if (timer) {
+      startCountdown(currentTime);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timer]);
 
   return (
     <>
@@ -109,7 +108,7 @@ const App = () => {
             <View style={styles.sectionContainer}>
               <Text style={styles.sectionTitle}>Pomodoro Timer</Text>
               <View style={styles.topNav}>
-                <TopBar />
+                <TopBar setTimer={setTimer} start={start} reset={reset} />
               </View>
               <View style={styles.displayContainer}>
                 <Text style={styles.display}>
@@ -122,7 +121,7 @@ const App = () => {
                 <TouchableOpacity onPress={start}>
                   <Icon name="controller-play" size={48} color="#274fed" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={stop}>
+                <TouchableOpacity onPress={stopCountdown}>
                   <Icon name="controller-stop" size={48} color="#274fed" />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={reset}>
