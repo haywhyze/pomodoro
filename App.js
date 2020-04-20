@@ -13,12 +13,11 @@ import Icon from 'react-native-vector-icons/Entypo';
 
 let currentTime;
 
-const App = () => {
-  const [countDown, setCountDown] = useState(countDown || null);
+let countDown;
 
+const App = () => {
   const [timer, setTimer] = useState(0);
 
-  // const [currentTime, setCurrentTime] = useState(25 * 60 * 1000);
   const [minutes, setMinutes] = useState(
     (minutes || 25).toLocaleString('en-US', {
       minimumIntegerDigits: 2,
@@ -47,40 +46,37 @@ const App = () => {
       clearInterval(countDown);
     }
 
-    setCountDown(
-      setInterval(() => {
-        const now = new Date().getTime();
+    countDown = setInterval(() => {
+      const now = new Date().getTime();
 
-        currentTime = countDownTime - now;
-
-        updateTime(
-          Math.floor((currentTime % (1000 * 60 * 60)) / (1000 * 60)),
-          setMinutes,
-        );
-        updateTime(Math.floor((currentTime % (1000 * 60)) / 1000), setSeconds);
-
-        if (currentTime < 0) {
-          stopCountdown();
-          resetCountdown();
-        }
-      }, 500),
-    );
+      currentTime = countDownTime - now;
+      if (currentTime < 0) {
+        stopCountdown();
+        resetCountdown();
+        return;
+      }
+      updateTime(
+        Math.floor((currentTime % (1000 * 60 * 60)) / (1000 * 60)),
+        setMinutes,
+      );
+      updateTime(Math.floor((currentTime % (1000 * 60)) / 1000), setSeconds);
+    }, 500);
   }
 
   function stopCountdown() {
     clearInterval(countDown);
-    setCountDown(null);
+    countDown = null;
   }
 
   function resetCountdown() {
-    updateTime(0, setMinutes);
-    updateTime(0, setSeconds);
     currentTime = timer * 60 * 1000;
   }
 
   function reset() {
     stopCountdown();
     resetCountdown();
+    updateTime(timer, setMinutes);
+    updateTime(0, setSeconds);
   }
 
   function start() {
@@ -108,7 +104,15 @@ const App = () => {
             <View style={styles.sectionContainer}>
               <Text style={styles.sectionTitle}>Pomodoro Timer</Text>
               <View style={styles.topNav}>
-                <TopBar setTimer={setTimer} start={start} reset={reset} />
+                <TopBar
+                  setTimer={setTimer}
+                  start={start}
+                  reset={reset}
+                  timer={timer}
+                  setMinutes={setMinutes}
+                  setSeconds={setSeconds}
+                  updateTime={updateTime}
+                />
               </View>
               <View style={styles.displayContainer}>
                 <Text style={styles.display}>

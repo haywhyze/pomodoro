@@ -2,7 +2,15 @@ import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import Button from 'react-native-button';
 
-const NavBarEdit = ({setTimer, start, reset}) => {
+const NavBarEdit = ({
+  setTimer,
+  start,
+  reset,
+  timer,
+  updateTime,
+  setMinutes,
+  setSeconds,
+}) => {
   const [activeButton, setActiveButton] = useState({
     pomodoro: true,
     short: false,
@@ -10,36 +18,48 @@ const NavBarEdit = ({setTimer, start, reset}) => {
   });
 
   const startPomodoro = () => {
-    reset();
+    if (timer === 25) {
+      reset();
+      start();
+    }
+    updateTime(25, setMinutes);
+    updateTime(0, setSeconds);
     setTimer(25);
     setActiveButton({
       pomodoro: true,
       short: false,
       long: false,
     });
-    // start();
   };
 
   const startShortBreak = () => {
-    reset();
+    if (timer === 5) {
+      reset();
+      start();
+    }
+    updateTime(5, setMinutes);
+    updateTime(0, setSeconds);
     setTimer(5);
     setActiveButton({
       pomodoro: false,
       short: true,
       long: false,
     });
-    // start();
   };
 
   const startLongBreak = () => {
-    reset();
+    if (timer === 10) {
+      reset();
+      start();
+    }
+    updateTime(10, setMinutes);
+    updateTime(0, setSeconds);
     setTimer(10);
     setActiveButton({
       pomodoro: false,
       short: false,
       long: true,
     });
-    // start();
   };
 
   return (
