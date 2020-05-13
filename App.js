@@ -7,6 +7,7 @@ import {
   Text,
   StatusBar,
   TouchableOpacity,
+  Vibration,
 } from 'react-native';
 import TopBar from './components/TopBar';
 import Icon from 'react-native-vector-icons/Entypo';
@@ -17,6 +18,14 @@ let countDown;
 
 const App = () => {
   const [timer, setTimer] = useState(0);
+
+  const ONE_SECOND_IN_MS = 1000;
+
+  const PATTERN = [
+    1 * ONE_SECOND_IN_MS,
+    2 * ONE_SECOND_IN_MS,
+    3 * ONE_SECOND_IN_MS,
+  ];
 
   const [minutes, setMinutes] = useState(
     (minutes || 25).toLocaleString('en-US', {
@@ -51,6 +60,7 @@ const App = () => {
 
       currentTime = countDownTime - now;
       if (currentTime < 0) {
+        Vibration.vibrate(PATTERN);
         stopCountdown();
         resetCountdown();
         return;
@@ -163,7 +173,8 @@ const styles = StyleSheet.create({
     padding: 32,
   },
   display: {
-    backgroundColor: '#999',
+    backgroundColor: '#274fed',
+    color: '#eaeefd',
     fontSize: 72,
     padding: 16,
     paddingTop: 0,
